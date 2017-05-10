@@ -166,6 +166,9 @@ const RESTController = {
       method = 'POST';
     }
 
+    if (!CoreManager.get('SERVER_AUTH_TYPE') && CoreManager.get('SERVER_AUTH_TOKEN')) {
+      payload._Bearer = CoreManager.get('SERVER_AUTH_TOKEN');
+    }
     payload._ApplicationId = CoreManager.get('APPLICATION_ID');
     let jsKey = CoreManager.get('JAVASCRIPT_KEY');
     if (jsKey) {
