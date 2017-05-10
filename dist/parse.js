@@ -1,5 +1,5 @@
 /**
- * Parse JavaScript SDK v1.9.2-sebasjm
+ * Parse JavaScript SDK v1.9.4-sebasjm
  *
  * The source tree of this library can be found at
  *   https://github.com/ParsePlatform/Parse-SDK-JS
@@ -224,9 +224,10 @@ var config = {
   IS_NODE: typeof process !== 'undefined' && !!process.versions && !!process.versions.node && !process.versions.electron,
   REQUEST_ATTEMPT_LIMIT: 5,
   SERVER_URL: 'https://api.parse.com/1',
-  CREDENTIALS: null,
+  SERVER_AUTH_TYPE: null,
+  SERVER_AUTH_TOKEN: null,
   LIVEQUERY_SERVER_URL: null,
-  VERSION: 'js' + '1.9.2-sebasjm',
+  VERSION: 'js' + '1.9.4-sebasjm',
   APPLICATION_ID: null,
   JAVASCRIPT_KEY: null,
   MASTER_KEY: null,
@@ -880,11 +881,11 @@ var LiveQueryClient = function (_EventEmitter) {
   (0, _inherits3.default)(LiveQueryClient, _EventEmitter);
 
   function LiveQueryClient(_ref) {
-    var applicationId = _ref.applicationId;
-    var serverURL = _ref.serverURL;
-    var javascriptKey = _ref.javascriptKey;
-    var masterKey = _ref.masterKey;
-    var sessionToken = _ref.sessionToken;
+    var applicationId = _ref.applicationId,
+        serverURL = _ref.serverURL,
+        javascriptKey = _ref.javascriptKey,
+        masterKey = _ref.masterKey,
+        sessionToken = _ref.sessionToken;
     (0, _classCallCheck3.default)(this, LiveQueryClient);
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (LiveQueryClient.__proto__ || (0, _getPrototypeOf2.default)(LiveQueryClient)).call(this));
@@ -1733,12 +1734,20 @@ Object.defineProperty(Parse, 'serverURL', {
     _CoreManager2.default.set('SERVER_URL', value);
   }
 });
-Object.defineProperty(Parse, 'credentials', {
+Object.defineProperty(Parse, 'serverAuthToken', {
   get: function () {
-    return _CoreManager2.default.get('CREDENTIALS');
+    return _CoreManager2.default.get('SERVER_AUTH_TOKEN');
   },
   set: function (value) {
-    _CoreManager2.default.set('CREDENTIALS', value);
+    _CoreManager2.default.set('SERVER_AUTH_TOKEN', value);
+  }
+});
+Object.defineProperty(Parse, 'serverAuthType', {
+  get: function () {
+    return _CoreManager2.default.get('SERVER_AUTH_TYPE');
+  },
+  set: function (value) {
+    _CoreManager2.default.set('SERVER_AUTH_TYPE', value);
   }
 });
 Object.defineProperty(Parse, 'liveQueryServerURL', {
@@ -10289,8 +10298,8 @@ var RESTController = {
       if (_CoreManager2.default.get('IS_NODE')) {
         headers['User-Agent'] = 'Parse/' + _CoreManager2.default.get('VERSION') + ' (NodeJS ' + process.versions.node + ')';
       }
-      if (_CoreManager2.default.get('CREDENTIALS')) {
-        headers['Authorization'] = 'Bearer ' + _CoreManager2.default.get('CREDENTIALS');
+      if (_CoreManager2.default.get('SERVER_AUTH_TYPE') && _CoreManager2.default.get('SERVER_AUTH_TOKEN')) {
+        headers['Authorization'] = _CoreManager2.default.get('SERVER_AUTH_TYPE') + ' ' + _CoreManager2.default.get('SERVER_AUTH_TOKEN');
       }
       xhr.open(method, url, true);
       for (var h in headers) {
@@ -10321,6 +10330,9 @@ var RESTController = {
       method = 'POST';
     }
 
+    if (!_CoreManager2.default.get('SERVER_AUTH_TYPE') && _CoreManager2.default.get('SERVER_AUTH_TOKEN')) {
+      payload._Bearer = _CoreManager2.default.get('SERVER_AUTH_TOKEN');
+    }
     payload._ApplicationId = _CoreManager2.default.get('APPLICATION_ID');
     var jsKey = _CoreManager2.default.get('JAVASCRIPT_KEY');
     if (jsKey) {
@@ -11775,14 +11787,14 @@ var _symbol = _dereq_("../core-js/symbol");
 
 var _symbol2 = _interopRequireDefault(_symbol);
 
-var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj; };
+var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
   return typeof obj === "undefined" ? "undefined" : _typeof(obj);
 } : function (obj) {
-  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
 },{"../core-js/symbol":53,"../core-js/symbol/iterator":54}],62:[function(_dereq_,module,exports){
 
